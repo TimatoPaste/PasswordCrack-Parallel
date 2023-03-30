@@ -1,1 +1,1 @@
-type ./script to run
+
