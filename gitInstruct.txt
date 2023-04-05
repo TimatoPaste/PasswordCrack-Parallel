@@ -1,0 +1,6 @@
+first: git fetch [url]
+then: git pull [url]
+then: git add *
+then: git commit
+finally: git push [url]
+use token for auth
