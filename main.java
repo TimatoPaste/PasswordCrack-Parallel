@@ -9,17 +9,20 @@ public class main{
 		cracking[] crackers = new cracking[letters.length];
 		for(int a = 0;a<crackers.length;a++){	
 			crackers[a] = new cracking(a,a,letters);
-			System.out.println("running");
+//			System.out.println("running");
 		}
 		for(cracking a:crackers){
 			a.run();
-			System.out.println("actually");
+//			System.out.println("actually");
 		}
 		boolean run = true;
 		String output = "";
 		while(run){
-			System.out.println("infinite loop");
+//			System.out.println("infinite loop");
+			//error while checking for the threads stop boolean. find better way to check whether threads have
+			//found solutions!!!
 			for(cracking a:crackers){
+				String apple = a.getPass();
 				System.out.println(a.getPass());
 				if(!a.isRunning()){
 					run = false;
@@ -29,6 +32,7 @@ public class main{
 					}
 					break;
 				}
+
 			}
 		}
 		System.out.println("password was"+ output);
@@ -37,17 +41,19 @@ public class main{
 
 class cracking extends Thread{
 	private password temp;
+	private String passwordLol;
 	private boolean stop = false;
 	private boolean done = false;
 	public cracking(int start, int end,String[] letters){
 		temp = new password(start,end,letters);
+		passwordLol = temp.getPass();
 	}
 	public void run(){
 		try{
 			while(!stop){
 				ProcessBuilder[] processbuilders = {
 					new ProcessBuilder(new String[]{"echo",temp.getPass()}),
-					new ProcessBuilder(new String[]{"java","pw"})
+					new ProcessBuilder(new String[]{"java","Password3"})
 				};
 				List<Process> processes = ProcessBuilder.startPipeline(Arrays.asList(processbuilders));
 				BufferedReader outcome = new BufferedReader(new InputStreamReader(processes.get(processes.size()-1).getInputStream()));
@@ -62,6 +68,7 @@ class cracking extends Thread{
 					break;
 				}
 				temp.up();
+				passwordLol = temp.getPass();
 			}
 		}
 		catch(Exception e){}
