@@ -13,17 +13,27 @@ public class password{
 	}
 	public void up(){
 		indices.set(0,indices.get(0)+1);
-		for(int a = 0;a<indices.size();a++){
-			if(indices.get(a)>end){
-				indices.set(a,start);
-				if(a+1==indices.size()){
-					indices.add(start);
-					for(int b = 0;b<indices.size();b++){
-						indices.set(b,start);
+		for(int indicesIndex = 0;indicesIndex<indices.size();indicesIndex++){
+			if(indicesIndex == 0){
+				if(indices.get(indicesIndex)>end){
+					indices.set(indicesIndex,start);
+					if(indicesIndex+1==indices.size()){
+						indices.add(0);
+					}
+					else{
+						indices.set(indicesIndex+1,indices.get(indicesIndex+1)+1);
 					}
 				}
-				else{
-					indices.set(a+1,indices.get(a+1)+1);
+			}
+			else{
+				if(indices.get(indicesIndex)==letters.length){
+					indices.set(indicesIndex,0);
+					if(indicesIndex+1==indices.size()){
+						indices.add(0);
+					}
+					else{
+						indices.set(indicesIndex+1,indices.get(indicesIndex+1)+1);
+					}
 				}
 			}
 		}
