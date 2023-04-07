@@ -15,7 +15,7 @@ public class passwordGuess {
 
             ProcessBuilder[] processbuilders = {
                     //don't forget to remove the cmd c for the lyron server
-                    new ProcessBuilder(new String[]{/*"cmd","/c","echo",*/ pass.getPass()}),
+                    new ProcessBuilder(new String[]{/*"cmd","/c","echo", */pass.getPass()}),
                     new ProcessBuilder(new String[]{/*"cmd","/c",*/command, fileName})
             };
             for (ProcessBuilder a : processbuilders) {

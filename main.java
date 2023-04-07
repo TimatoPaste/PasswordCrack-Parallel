@@ -1,6 +1,6 @@
 import java.util.*;
 import java.io.*;
-//stopping mechanism is flawed
+//stopping mechanism is flawed sdfj;lasjfl;asjf;ljasd
 public class main {
 	public static void main(String args[]) {
 		String[] letters = new String[26];
@@ -25,6 +25,8 @@ class crackRun extends Thread{
 	}
 	@Override
 	public void run(){
+		Stopwatch time = new Stopwatch();
+		time.start();
 		int stopIndex = 0;
 		boolean running = true;
 		while(running){
@@ -32,6 +34,7 @@ class crackRun extends Thread{
 				if(!crackers[a].isAlive()){
 					stopIndex = a;
 					running = false;
+					time.stop();
 					break;
 				}
 			}
@@ -40,10 +43,11 @@ class crackRun extends Thread{
 			a.stopIt();
 		}
 		try {
-			Thread.sleep(1000);
+//			Thread.sleep(1000);
 		}
 		catch(Exception e){}
 		System.out.println(crackers[stopIndex].getPass());
+		System.out.println(time.getTime()+" milliseconds");
 	}
 }
 class cracking extends Thread{
@@ -55,7 +59,7 @@ class cracking extends Thread{
 	@Override
 	public void run() {
 		while(!found){
-			String feedback = guess.guess();
+			String feedback = guess.guess().trim() ;
 			System.out.println(feedback+" "+guess.getPass());
 			if(feedback.toLowerCase().contains(" correct")){
 				found = true;
