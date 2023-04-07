@@ -1,85 +1,71 @@
 import java.util.*;
 import java.io.*;
-public class main{
-	public static void main(String args[]){
+//stopping mechanism is flawed
+public class main {
+	public static void main(String args[]) {
 		String[] letters = new String[26];
-		for(int a = 0;a<letters.length;a++){
-			letters[a] = String.valueOf((char)(97+a));
+		for (int a = 0; a < letters.length; a++) {
+			letters[a] = String.valueOf((char) (97 + a));
 		}
-		cracking[] crackers = new cracking[letters.length];
-		for(int a = 0;a<crackers.length;a++){	
-			crackers[a] = new cracking(a,a,letters);
-//			System.out.println("running");
+		cracking[] cracker = new cracking[letters.length];
+		for(int a = 0;a<cracker.length;a++){
+			cracker[a] = new cracking(a,a,letters);
 		}
-		for(cracking a:crackers){
-			a.run();
-//			System.out.println("actually");
+		for(cracking a:cracker){
+			a.start();
 		}
-		boolean run = true;
-		String output = "";
-		while(run){
-//			System.out.println("infinite loop");
-			//error while checking for the threads stop boolean. find better way to check whether threads have
-			//found solutions!!!
-			for(cracking a:crackers){
-				String apple = a.getPass();
-				System.out.println(a.getPass());
-				if(!a.isRunning()){
-					run = false;
-					output = a.getPass();
-					for(cracking b:crackers){
-						b.stopIt();
-					}
-					break;
-				}
-
-			}
-		}
-		System.out.println("password was"+ output);
+		crackRun check = new crackRun(cracker);
+		check.start();
 	}
 }
-
-class cracking extends Thread{
-	private password temp;
-	private String passwordLol;
-	private boolean stop = false;
-	private boolean done = false;
-	public cracking(int start, int end,String[] letters){
-		temp = new password(start,end,letters);
-		passwordLol = temp.getPass();
+class crackRun extends Thread{
+	private cracking[] crackers;
+	public crackRun(cracking[] crackersIn){
+		crackers = crackersIn;
 	}
+	@Override
 	public void run(){
-		try{
-			while(!stop){
-				ProcessBuilder[] processbuilders = {
-					new ProcessBuilder(new String[]{"echo",temp.getPass()}),
-					new ProcessBuilder(new String[]{"java","Password3"})
-				};
-				List<Process> processes = ProcessBuilder.startPipeline(Arrays.asList(processbuilders));
-				BufferedReader outcome = new BufferedReader(new InputStreamReader(processes.get(processes.size()-1).getInputStream()));
-				String apple = "";
-				while((apple = outcome.readLine())!=null){
-					if(apple.indexOf(" correct") == -1 && apple.indexOf(" Correct") == -1){
-						done = true;
-						break;
-					}
-				}
-				if(done){
+		int stopIndex = 0;
+		boolean running = true;
+		while(running){
+			for(int a = 0;a<crackers.length;a++){
+				if(!crackers[a].isAlive()){
+					stopIndex = a;
+					running = false;
 					break;
 				}
-				temp.up();
-				passwordLol = temp.getPass();
 			}
 		}
+		for(cracking a:crackers){
+			a.stopIt();
+		}
+		try {
+			Thread.sleep(1000);
+		}
 		catch(Exception e){}
+		System.out.println(crackers[stopIndex].getPass());
 	}
-	public void stopIt(){
-		stop = true;
+}
+class cracking extends Thread{
+	private passwordGuess guess;
+	private boolean found = false;
+	public cracking(int start,int end,String[] letters){
+		guess = new passwordGuess(new password(start,end,letters),"java","Password3");
 	}
-	public boolean isRunning(){
-		return !done || !stop;
+	@Override
+	public void run() {
+		while(!found){
+			String feedback = guess.guess();
+			System.out.println(feedback+" "+guess.getPass());
+			if(feedback.toLowerCase().contains(" correct")){
+				found = true;
+			}
+			else{
+				guess.up();
+			}
+		}
 	}
-	public String getPass(){
-		return temp.getPass();
-	}
+	public String getPass(){ return guess.getPass();}
+	public void stopIt(){ found = true; }
+	public boolean isRunning(){ return !found; }
 }
